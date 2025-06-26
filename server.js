@@ -1,46 +1,57 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+const config = require('./_config.js');
 
 // Define routes
 let index = require('./routes/index');
 let image = require('./routes/image');
 
-// connecting the database
-let mongodb_url = 'mongodb://localhost:27017/';
-let dbName = 'darkroom';
-mongoose.connect(`${mongodb_url}${dbName}`,{ useNewUrlParser: true , useUnifiedTopology: true }, (err)=>{
-    if (err) console.log(err)
-});
+// Environment setup
+const env = process.env.NODE_ENV || 'development';
+const mongoURI = config.mongoURI[env];
 
-// test if the database has connected successfully
-let db = mongoose.connection;
-db.once('open', ()=>{
-    console.log('Database connected successfully')
+if (!mongoURI) {
+    console.error(`Mongo URI not found for environment: ${env}`);
+    process.exit(1);
+}
+
+// Database connection
+mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 })
+.then(() => console.log("Connected to Mongo DB Atlas"))
+.catch((err) => console.error("Failed to connect:", err.message));
 
-// Initializing the app
+let db = mongoose.connection;
+db.once('open', () => {
+    console.log("Database connected successfully");
+});
+db.on('error', (err) => console.error('Database connection error:', err));
+
+// Initialize app
 const app = express();
 
-
-// View Engine
+// View engine
 app.set('view engine', 'ejs');
 
-// Set up the public folder;
+// Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// body parser middleware
-app.use(express.json())
+// Middleware
+app.use(express.json());
 
-
+// Routes
 app.use('/', index);
 app.use('/image', image);
 
+// Start server if not being required
+if (require.main === module) {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`Server is listening at http://localhost:${PORT}`);
+    });
+}
 
-
- 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT,() =>{
-    console.log(`Server is listening at http://localhost:${PORT}`)
-});
+module.exports = app;
