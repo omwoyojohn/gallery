@@ -19,7 +19,7 @@ pipeline {
         stage('Build Project') {
             steps {
                 echo 'Building the Node.js project...'
-                // Add build scripts if needed: sh 'npm run build'
+                // You can add: sh 'npm run build' if needed
             }
         }
 
