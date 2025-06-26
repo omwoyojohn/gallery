@@ -10,20 +10,3 @@ Whitelisted all IP addresses for testing purposes
 Retrieved the connection URI for MongoDB Atlas; 
 
 Updated the _config.js file to include the new mongoURI for: mongodb+srv://omwoyo:Nairobi@2025!!@omwoyo.bjgaa4t.mongodb.net/?retryWrites=true&w=majority&appName=Omwoyo
-
-
-Config file
-
-🔐 Sample Config (from _config.js)
-js
-Copy
-Edit
-var config = {}
-
-config.mongoURI = {
-  production: 'mongodb+srv://omwoyo:Nairobi2025@omwoyo.bjgaa4t.mongodb.net/?retryWrites=true&w=majority&appName=Omwoyo',
-  development: 'mongodb+srv://omwoyo:Nairobi2025@omwoyo.bjgaa4t.mongodb.net/?retryWrites=true&w=majority&appName=Omwoyo',
-  test: 'mongodb+srv://omwoyo:Nairobi2025@omwoyo.bjgaa4t.mongodb.net/?retryWrites=true&w=majority&appName=Omwoyo',
-}
-
-module.exports = config;
