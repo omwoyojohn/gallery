@@ -29,8 +29,7 @@ pipeline {
 
         stage('Deploy to Render') {
             steps {
-                // Replace this with your actual deploy command
-                sh './deploy.sh'  // or your curl/webhook to Render
+                sh 'https://api.render.com/deploy/srv-d1cit115pdvs73etlbo0?key=MhGvOei8u9Y'
             }
         }
     }
