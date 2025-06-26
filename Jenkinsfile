@@ -13,44 +13,33 @@ pipeline {
             }
         }
 
-        stage('Install Node.js') {
-            steps {
-                echo "Installing Node.js manually..."
-                sh '''
-                    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                    node -v
-                    npm -v
-                '''
-            }
-        }
-
-        stage('Install Dependencies') {
+        stage("Install Dependencies") {
             steps {
                 echo "Installing dependencies"
-                sh 'npm install'
+                sh "npm install"
             }
         }
 
-        stage('Build Project') {
+        stage("Build Project") {
             steps {
-                echo "Building code"
-                sh 'echo "No build step needed"'
+                echo "Building the Node.js project..."
+                // If you have a build step like 'npm run build', add it here
+                // sh "npm run build"
             }
         }
 
-        stage('Run Tests') {
+        stage("Run Tests") {
             steps {
                 echo "Running tests"
-                sh 'npm test || echo "No tests defined"'
+                sh "npm test"
             }
         }
 
-        stage('Deploy to Render') {
+        stage("Deploy to Render") {
             steps {
                 echo "Deploying to Render..."
-                withCredentials([string(credentialsId: 'render-deploy-hook', variable: 'DEPLOY_HOOK')]) {
-                    sh 'curl -X POST $DEPLOY_HOOK'
+                withCredentials([string(credentialsId:'render-deploy-hook', variable:'DEPLOY_HOOK')]) {
+                    sh "curl -X POST $DEPLOY_HOOK"
                 }
             }
         }
@@ -64,19 +53,6 @@ pipeline {
         success {
             echo "Pipeline completed successfully"
             echo "Deployment to Render was successful"
-
-            slackSend(
-                channel: '#all-sophieip1',
-                color: 'good',
-                tokenCredentialId: 'Sophie_IP1',
-                message: """
-                Deployment Successful 🎉
-
-                Build ID: #${env.BUILD_NUMBER}
-                Branch: master
-                Live URL: ${env.RENDER_URL}
-                """
-            )
         }
 
         always {
