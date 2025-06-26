@@ -1,11 +1,15 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'NodeJS'
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
                 echo 'Pulling the latest code from the repository...'
-                git branch: 'master', url: 'git@github.com:omwoyojohn/gallery.git'
+                git branch: 'master', url: 'https://github.com/omwoyojohn/gallery.git'
             }
         }
 
@@ -19,7 +23,6 @@ pipeline {
         stage('Build Project') {
             steps {
                 echo 'Building the Node.js project...'
-                // Add build scripts if needed: sh 'npm run build'
             }
         }
 
