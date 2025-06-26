@@ -2,61 +2,36 @@ pipeline {
     agent any
 
     environment {
-        RENDER_URL = 'https://gallery-u51o.onrender.com'
+        NODE_ENV = 'production'
     }
 
     stages {
-        stage('Check code') {
+        stage('Install Dependencies') {
             steps {
-                echo "Checking code from Omwoyo's gallery repository"
-                git branch: 'master', url: 'https://github.com/omwoyojohn/gallery.git'
+                sh 'npm install'
             }
         }
 
-        stage("Install Dependencies") {
+        stage('Run Tests') {
             steps {
-                echo "Installing dependencies"
-                sh "npm install"
-            }
-        }
-
-        stage("Build Project") {
-            steps {
-                echo "Building the Node.js project..."
-                // If you have a build step like 'npm run build', add it here
-                // sh "npm run build"
-            }
-        }
-
-        stage("Run Tests") {
-            steps {
-                echo "Running tests"
-                sh "npm test"
-            }
-        }
-
-        stage("Deploy to Render") {
-            steps {
-                echo "Deploying to Render..."
-                withCredentials([string(credentialsId:'render-deploy-hook', variable:'DEPLOY_HOOK')]) {
-                    sh "curl -X POST $DEPLOY_HOOK"
+                script {
+                    try {
+                        sh 'npm test'
+                    } catch (err) {
+                        mail to: 'jonwonga@livinggoods.org',
+                             subject: "🚨 Jenkins Build Failed: Tests Did Not Pass",
+                             body: "Hey Omwoyo, the tests failed in the pipeline. Please check and fix the issues."
+                        error("Tests failed. Stopping the build.")
+                    }
                 }
             }
         }
-    }
 
-    post {
-        failure {
-            echo "Pipeline failed"
-        }
-
-        success {
-            echo "Pipeline completed successfully"
-            echo "Deployment to Render was successful"
-        }
-
-        always {
-            echo 'Pipeline execution completed'
+        stage('Deploy to Render') {
+            steps {
+                // Replace this with your actual deploy command
+                sh './deploy.sh'  // or your curl/webhook to Render
+            }
         }
     }
 }
