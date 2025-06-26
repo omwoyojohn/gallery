@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS'
-    }
-
     environment {
         RENDER_URL = 'https://gallery-u51o.onrender.com'
     }
@@ -17,6 +13,18 @@ pipeline {
             }
         }
 
+        stage('Install Node.js') {
+            steps {
+                echo "Installing Node.js manually..."
+                sh '''
+                    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+                    sudo apt-get install -y nodejs
+                    node -v
+                    npm -v
+                '''
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 echo "Installing dependencies"
@@ -24,18 +32,17 @@ pipeline {
             }
         }
 
-        stage('Building code') {
+        stage('Build Project') {
             steps {
                 echo "Building code"
-                // Optional: sh 'npm run build' or your custom build script
-                sh 'echo "No build script needed for now"'
+                sh 'echo "No build step needed"'
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo "Running tests"
-                sh 'npm test || echo "No tests configured, skipping..."'
+                sh 'npm test || echo "No tests defined"'
             }
         }
 
@@ -59,9 +66,9 @@ pipeline {
             echo "Deployment to Render was successful"
 
             slackSend(
-                channel: '#all-sophieip1', // ✅ UPDATE if you have a different channel
+                channel: '#all-sophieip1',
                 color: 'good',
-                tokenCredentialId: 'Sophie_IP1', // ✅ UPDATE this if you have your own Slack token
+                tokenCredentialId: 'Sophie_IP1',
                 message: """
                 Deployment Successful 🎉
 
