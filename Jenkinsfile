@@ -29,7 +29,7 @@ pipeline {
 
         stage('Deploy to Render') {
             steps {
-                sh 'https://api.render.com/deploy/srv-d1cit115pdvs73etlbo0?key=MhGvOei8u9Y'
+                sh 'curl -X POST https://api.render.com/deploy/srv-d1cit115pdvs73etlbo0?key=MhGvOei8u9Y'
             }
         }
     }
