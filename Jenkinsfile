@@ -20,18 +20,23 @@ pipeline {
             }
             post {
                 failure {
+                    echo 'Tests failed.'
                     emailext(
                         subject: "Jenkins Build #${env.BUILD_NUMBER} Failed",
-                        body: "Tests failed. Check Jenkins logs.",
+                        body: "Build failed during tests. Please check Jenkins logs for more details.",
                         to: 'omwoyojohn91@gmail.com'
                     )
-                    error('Tests failed')
+                    error('Tests did not pass.')
+                }
+                success {
+                    echo 'Tests passed.'
                 }
             }
         }
 
         stage('Deploy to Render') {
             steps {
+                echo 'Deploying to Render...'
                 sh "curl -X POST https://api.render.com/deploy/srv-d1cit115pdvs73etlbo0?key=MhGvOei8u9Y"
             }
             post {
@@ -40,15 +45,15 @@ pipeline {
                         channel: '#omwoyo-ip1',
                         color: 'good',
                         message: "✅ Milestone 3 Deployed! Build #${env.BUILD_NUMBER}: https://gallery-u51o.onrender.com",
-                        teamDomain: 'your-team-domain',
+                        teamDomain: 'OmwoyoTeam',
                         tokenCredentialId: 'slacktoken',
                         botUser: true
                     )
                     slackSend(
                         channel: '#all-ip-1-assignment',
                         color: 'good',
-                        message: "✅ Milestone 3 for Omwoyo deployed: https://gallery-u51o.onrender.com",
-                        teamDomain: 'your-team-domain',
+                        message: "📢 Omwoyo’s Build #${env.BUILD_NUMBER} has been deployed: https://gallery-u51o.onrender.com",
+                        teamDomain: 'OmwoyoTeam',
                         tokenCredentialId: 'slacktoken',
                         botUser: true
                     )
@@ -59,10 +64,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build and deploy successful.'
+            echo 'Build and deployment completed successfully.'
         }
         always {
-            echo 'Pipeline complete.'
+            echo 'Pipeline execution complete.'
         }
     }
 }
