@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'git@github.com:omwoyojohn/gallery.git'
+                git branch: 'master', url: 'git@github.com:omwoyojohn/gallery.git'
             }
         }
 
@@ -44,12 +44,11 @@ pipeline {
                     slackSend(
                         channel: '#omwoyo-ip1',
                         color: 'good',
-                        message: "✅ Deployment Successful! Build #${env.BUILD_NUMBER} deployed: https://gallery-u51o.onrender.com",
+                        message: "✅ Milestone 3 Deployed! Build #${env.BUILD_NUMBER}: https://gallery-u51o.onrender.com",
                         teamDomain: 'OmwoyoTeam',
                         tokenCredentialId: 'slacktoken',
                         botUser: true
                     )
-
                     slackSend(
                         channel: '#all-ip-1-assignment',
                         color: 'good',
