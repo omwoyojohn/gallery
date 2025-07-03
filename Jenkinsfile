@@ -30,7 +30,6 @@ pipeline {
                 }
                 success {
                     echo 'Tests passed.'
-                    )
                 }
             }
         }
