@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS-18'
-    }
-
     stages {
         stage('Clone Repository') {
             steps {
@@ -20,7 +16,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'npm test || echo "No tests configured"'
+                sh 'npm test'
             }
             post {
                 failure {
@@ -45,7 +41,6 @@ pipeline {
             }
             post {
                 success {
-                    // First Slack channel
                     slackSend(
                         channel: '#omwoyo-ip1',
                         color: 'good',
@@ -54,8 +49,7 @@ pipeline {
                         tokenCredentialId: 'slacktoken',
                         botUser: true
                     )
-                    
-                    // Second Slack channel
+
                     slackSend(
                         channel: '#all-ip-1-assignment',
                         color: 'good',
